@@ -1,0 +1,30 @@
+﻿@model Assignment2.Models.Trainer
+
+@{var subject = Model.Subject == 0 ? Model.SubjectString.Replace("Sharp", "#") : Model.SubjectString; }
+
+<h1 class="h1">@ViewBag.details</h1>
+<br />
+<strong class="text-info" style="font-size:larger">Firstname:</strong>
+<span>@Model.FirstName</span>
+<br />
+<strong class="text-info" style="font-size:larger">Lastname:</strong>
+<span>@Model.LastName</span>
+<br />
+<strong class="text-info" style="font-size:larger">Subject: </strong>
+<span>@subject</span>
+<br />
+<br />
+<br />
+<a class="btn btn-success" href="/Trainer/Update?id=@Model.ID">Update</a>
+<a class="btn btn-primary" href="/Trainer/Index">Go Back</a>
+
+@section myCss{
+
+    <style>
+        body {
+            background-color: honeydew;
+        }
+    </style>
+
+
+}

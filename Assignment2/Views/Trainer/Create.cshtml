@@ -1,0 +1,63 @@
+﻿@model Assignment2.Models.Trainer
+@using Assignment2.Models.Enums
+
+
+<h1>@ViewBag.add</h1>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        @Html.LabelFor(t => t.FirstName)
+        @Html.EditorFor(t => t.FirstName, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter firstname" } })
+        @Html.ValidationMessageFor(t => t.FirstName, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(t => t.LastName)
+        @Html.EditorFor(t => t.LastName, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter lastname" } })
+        @Html.ValidationMessageFor(t => t.LastName, "", new { @class = "text-danger" })
+    </div>
+
+    @{ var subjects = Enum.GetNames(typeof(Subject)); }
+
+
+    <div class="form-group">
+        <label for="subject"></label>
+        <select id="subject" class="form-control" name="Subject" value="@(Model?.SubjectString)">
+
+
+            @for (int i = 0; i < subjects.Length; i++)
+            {
+                if (i == 0)
+                {
+                    <option selected value="@i">@subjects[i].ToString().Replace("Sharp", "#")</option>
+                }
+                else
+                {
+                    <option value="@i">@subjects[i].ToString()</option>
+                }
+
+            }
+
+        </select>
+    </div>
+
+    <input class="btn btn-success" type="submit" value="Add" />
+    <input class="btn btn-warning" type="reset" value="Clear" />
+</form>
+<br />
+<br />
+<br />
+@Html.ActionLink("Go Back", "Index", null, new { @class = "btn btn-primary" })
+
+
+
+@section myCss{
+
+    <style>
+        body {
+            background-color: honeydew;
+        }
+    </style>
+
+
+}

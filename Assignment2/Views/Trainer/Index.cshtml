@@ -1,0 +1,160 @@
+﻿@model PagedList.IPagedList<Assignment2.Models.Trainer>
+@using Assignment2.Models.Enums
+@using PagedList;
+@using PagedList.Mvc;
+
+<h1>@ViewBag.trainers</h1>
+
+<br />
+@if (TempData["message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Success!</strong> @TempData["message"]
+    </div>
+}
+
+<br />
+<a class="btn btn-warning" href="/Trainer/Create">Add Trainer</a>
+<br />
+<br />
+<br />
+
+@if (Model.Count == 0)
+{
+<div>
+    <h1 class="text-danger">No trainers!</h1>
+    <br />
+    <a class="btn btn-success" href="/Trainer/Index">Go back to index</a>
+</div>
+}
+else
+{
+    <div>
+        <div><strong>Page @(Model.PageCount < Model.PageNumber? 0 : Model.PageNumber) of @Model.PageCount</strong></div>
+
+        <table class="table">
+            <thead>
+                <tr class="text-info">
+                    <th>ID</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Subject</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var trainer in Model)
+                {
+                    var rowClass = trainer.ID % 2 == 0 ? "bg-warning" : "bg-success";
+                    var subject = trainer.Subject == 0 ? trainer.Subject.ToString().Replace("Sharp", "#") : trainer.Subject.ToString();
+
+                    <tr class=@rowClass>
+                        <td>@trainer.ID</td>
+                        <td>@trainer.FirstName</td>
+                        <td>@trainer.LastName</td>
+                        <td>@subject</td>
+                        <td class="btn-group-sm">
+                            <a class="btn btn-info" href="/Trainer/Details?id=@trainer.ID">Details</a>
+                            <a class="btn btn-success" href="/Trainer/Update?id=@trainer.ID">Update</a>
+                            <form action="/Trainer/Delete" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@trainer.ID" />
+                                <input class="btn btn-danger btn-xs" type="submit" value="Delete" />
+                            </form>
+                        </td>
+                    </tr>
+
+                }
+
+
+            </tbody>
+        </table>
+
+        <br />
+
+
+        <div>
+            <div>
+                <button class="btn-warning" id="filtersBtn">Show Filters</button>
+                <button class="btn-warning" id="sortBtn">Show Sort Options</button>
+            </div>
+            <form>
+                <div id="filterMenu">
+                    @{ var subjects = Enum.GetNames(typeof(Subject)); }
+                    <select name="searchSubject">
+
+                        <option value="">All</option>
+                        @{
+                            foreach (var subject in subjects)
+                            {
+                                <option>@subject</option>
+                            }
+                        }
+                    </select>
+                    <input type="text" name="searchFirstName" value="" placeholder="Enter firstname" />
+                    <input type="text" name="searchLastName" value="" placeholder="Enter lastname" />
+                    <input class="bg-primary" type="submit" value="Filter trainers" />
+                </div>
+                <br />
+                
+                <div id="sortMenu">
+                    <label for="sortOrder">Sort by:</label>
+                    <input onchange="this.form.submit()" type="radio" name="sortOrder" value="FirstNameAsc" id="firstNameAsc"><label for="firstNameAsc">Firstname Ascending</label>
+                    <input onchange="this.form.submit()" type="radio" name="sortOrder" value="FirstNameDesc" id="firstNameDesc"><label for="firstNameDesc">FirstName Descending</label>
+                    <input onchange="this.form.submit()" type="radio" name="sortOrder" value="LastNameAsc" id="lastNameAsc"><label for="lastNameAsc">LastName Ascending</label>
+                    <input onchange="this.form.submit()" type="radio" name="sortOrder" value="LastNameDesc" id="lastNameDesc"><label for="lastNameDesc">LastName Descending</label>
+                </div>
+            </form>
+        </div>
+
+        <br />
+     
+
+        <br />
+        <div class="pager">@Html.PagedListPager(Model, x => Url.Action("Index", "Trainer", new { page = x, pSize = 5 }), PagedListRenderOptions.ClassicPlusFirstAndLast)</div>
+        <br />
+    </div>
+}
+
+
+
+
+@section scripts{
+
+    <script>
+        $(document).ready(function () {
+            $("#filterMenu").hide();
+            $("#filtersBtn").click(filterHandler);
+
+            function filterHandler() {
+                $("#filterMenu").toggle(500);
+                let btnText = $("#filtersBtn").text();
+                $("#filtersBtn").text(btnText == "Show Filters" ? "Hide Filters" : "Show Filters");
+            }
+
+            $("#sortMenu").hide();
+            $("#sortBtn").click(sortHandler);
+
+            function sortHandler() {
+                $("#sortMenu").toggle(500);
+                let btntext = $("#sortBtn").text();
+                $("#sortBtn").text(btntext == "Show Sort Options" ? "Hide Sort Options" : "Show Sort Options");
+            }
+        })
+
+
+    </script>
+}
+
+@section myCss{
+    
+  <style>
+      body{
+          background-color: honeydew;
+      }
+    </style>  
+    
+    
+}
